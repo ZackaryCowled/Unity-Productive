@@ -1,28 +1,30 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
-public class CSV
+namespace UnityProductive
 {
-	StringBuilder data;
-
-	public CSV(string value = "")
+	public class CSV
 	{
-		data = new StringBuilder();
-		data.Append(value);
-	}
+		StringBuilder data;
 
-	public void AppendValue(string value)
-	{
-		data.Append(value + ',');
-	}
+		public CSV(string value = "")
+		{
+			data = new StringBuilder();
+			data.Append(value);
+		}
 
-	public void EndLine()
-	{
-		data.AppendLine();
-	}
+		public void AppendValue(string value)
+		{
+			data.Append(value + ',');
+		}
 
-	public override string ToString()
-	{
-		return data.ToString();
+		public void EndLine()
+		{
+			data.AppendLine();
+		}
+
+		public override string ToString()
+		{
+			return data.ToString();
+		}
 	}
 }

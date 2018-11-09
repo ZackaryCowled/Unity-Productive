@@ -1,53 +1,53 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEngine;
 
-public class Area
+namespace UnityProductive
 {
-	Vector2 position;
-	Vector2 scale;
-	Margin margin;
-
-	public Area(Vector2 position, Vector2 scale, Margin margin)
+	public class Area
 	{
-		this.position = position;
-		this.scale = scale;
-		this.margin = margin;
-	}
+		Vector2 position;
+		Vector2 scale;
+		Margin margin;
 
-	public Vector2 GetPosition()
-	{
-		return position;
-	}
+		public Area(Vector2 position, Vector2 scale, Margin margin)
+		{
+			this.position = position;
+			this.scale = scale;
+			this.margin = margin;
+		}
 
-	public Vector2 GetScale()
-	{
-		return scale;
-	}
+		public Vector2 GetPosition()
+		{
+			return position;
+		}
 
-	public Margin GetMargin()
-	{
-		return margin;
-	}
+		public Vector2 GetScale()
+		{
+			return scale;
+		}
 
-	public void SetPosition(Vector2 newPosition)
-	{
-		position = newPosition;
-	}
+		public Margin GetMargin()
+		{
+			return margin;
+		}
 
-	public void SetScale(Vector2 newScale)
-	{
-		scale = newScale;
-	}
+		public void SetPosition(Vector2 newPosition)
+		{
+			position = newPosition;
+		}
 
-	public void SetMargin(Margin newMargin)
-	{
-		margin = newMargin;
-	}
+		public void SetScale(Vector2 newScale)
+		{
+			scale = newScale;
+		}
 
-	public Rect ToRect()
-	{
-		return new Rect(position.x + margin.Left, position.y + margin.Top, scale.x - margin.Left - margin.Right, scale.y - margin.Top - margin.Bottom);
+		public void SetMargin(Margin newMargin)
+		{
+			margin = newMargin;
+		}
+
+		public Rect ToRect()
+		{
+			return new Rect(position.x + margin.Left, position.y + margin.Top, scale.x - margin.Left - margin.Right, scale.y - margin.Top - margin.Bottom);
+		}
 	}
 }

@@ -1,15 +1,18 @@
 ﻿using System.IO;
 
-public static class Importer
+namespace UnityProductive
 {
-	public static string ImportFileAsText(string filepath)
+	public static class Importer
 	{
-		StreamReader streamReader = new StreamReader(filepath);
+		public static string ImportFileAsText(string filepath)
+		{
+			StreamReader streamReader = new StreamReader(filepath);
 
-		string text = streamReader.ReadToEnd();
+			string text = streamReader.ReadToEnd();
 
-		streamReader.Close();
+			streamReader.Close();
 
-		return text;
+			return text;
+		}
 	}
 }

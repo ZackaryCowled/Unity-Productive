@@ -1,11 +1,14 @@
-﻿public static class CSVImporter
+﻿namespace UnityProductive
 {
-	public static CSV Import(string filepath)
+	public static class CSVImporter
 	{
-		CSV csv = new CSV();
+		public static CSV Import(string filepath)
+		{
+			CSV csv = new CSV();
 
-		csv.AppendValue(Importer.ImportFileAsText(filepath));
+			csv.AppendValue(Importer.ImportFileAsText(filepath));
 
-		return csv;
+			return csv;
+		}
 	}
 }

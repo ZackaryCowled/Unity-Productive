@@ -32,9 +32,7 @@ namespace UnityProductive
 				Directory.CreateDirectory(databasesPath);
 			}
 
-			DatabaseManager databaseManager = new DatabaseManager(window);
-
-			renderGroups.Add(databaseManager);
+			renderGroups.Add(new DatabaseManager(window));
 		}
 
 		void OnGUI()

@@ -1,13 +1,16 @@
 ﻿using System.IO;
 
-public static class Exporter
+namespace UnityProductive
 {
-	public static void ExportTextToFile(string filepath, string text)
+	public static class Exporter
 	{
-		StreamWriter streamWriter = new StreamWriter(filepath);
+		public static void ExportTextToFile(string filepath, string text)
+		{
+			StreamWriter streamWriter = new StreamWriter(filepath);
 
-		streamWriter.Write(text);
+			streamWriter.Write(text);
 
-		streamWriter.Close();
+			streamWriter.Close();
+		}
 	}
 }

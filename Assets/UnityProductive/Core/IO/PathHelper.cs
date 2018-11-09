@@ -1,16 +1,19 @@
 ﻿using System.IO;
 
-public static class PathHelper
+namespace UnityProductive
 {
-	public static string EnsurePath(string path)
+	public static class PathHelper
 	{
-		if (!Directory.Exists(path))
+		public static string EnsurePath(string path)
 		{
-			DirectoryInfo directoryInfo = Directory.CreateDirectory(path);
+			if (!Directory.Exists(path))
+			{
+				DirectoryInfo directoryInfo = Directory.CreateDirectory(path);
 
-			return directoryInfo.FullName;
+				return directoryInfo.FullName;
+			}
+
+			return null;
 		}
-
-		return null;
 	}
 }
