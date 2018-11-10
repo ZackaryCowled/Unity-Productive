@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace UnityProductive
@@ -18,7 +17,7 @@ namespace UnityProductive
 			pool.OnCreate += CreateObject;
 		}
 
-		public T CreateObject<T>(Hash hash) where T : PoolObject, new()
+		public T CreateObject<T>(Hash hash) where T : IPoolObject, new()
 		{
 			nextHash = hash;
 			return pool.CreateObject<T>();
@@ -35,12 +34,12 @@ namespace UnityProductive
 			indexMap.Remove(hash);
 		}
 
-		public T GetObject<T>(Hash hash) where T : PoolObject
+		public T GetObject<T>(Hash hash) where T : IPoolObject
 		{
 			return pool.GetObject<T>(indexMap[hash]);
 		}
 
-		public void ForEach<T>(Action<T> action) where T : PoolObject
+		public void ForEach<T>(Action<T> action) where T : IPoolObject
 		{
 			pool.ForEach(action);
 		}

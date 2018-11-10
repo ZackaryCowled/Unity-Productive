@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 using UnityEditor;
 
 namespace UnityProductive
 {
-	public class RenderObject : PoolObject
+	public class RenderObject : IPoolObject
 	{
 		public delegate void ResizeEvent(EditorWindow window);
 		public event ResizeEvent OnResize;
@@ -16,7 +15,12 @@ namespace UnityProductive
 
 		Vector2 windowScale;
 
-		public RenderObject()
+		~RenderObject()
+		{
+			OnResize = null;
+		}
+
+		public void Instantiate()
 		{
 			IsActive = true;
 			RenderArea = new Area(Vector2.zero, Vector2.zero, new Margin(0.0f, 0.0f, 0.0f, 0.0f));
@@ -24,23 +28,14 @@ namespace UnityProductive
 			windowScale = Vector2.zero;
 		}
 
-		~RenderObject()
+		public void Destroy()
 		{
-			OnResize = null;
-		}
-
-		public override void OnRecycle()
-		{
-			base.OnRecycle();
-
-			IsActive = true;
-		}
-
-		public override void OnDestroy()
-		{
-			base.OnDestroy();
-
 			IsActive = false;
+		}
+
+		public void Recycle()
+		{
+			IsActive = true;
 		}
 
 		public void PollEvents(EditorWindow window)

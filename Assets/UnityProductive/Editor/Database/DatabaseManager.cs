@@ -21,7 +21,7 @@ namespace UnityProductive
 			openDatabaseButton = CreateRenderObject<Button>("Open Database Button");
 			openDatabaseButton.Text = "Open Database";
 			openDatabaseButton.OnResize += OnOpenDatabaseButtonResize;
-			openDatabaseButton.OnClicked += OnCreateDatabaseButtonClicked;
+			openDatabaseButton.OnClicked += OnOpenDatabaseButtonClicked;
 
 			createDatabaseButton = CreateRenderObject<Button>("Create Database Button");
 			createDatabaseButton.Text = "Create Database";

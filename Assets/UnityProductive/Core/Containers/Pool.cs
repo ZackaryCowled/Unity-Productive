@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityProductive
 {
@@ -11,12 +12,12 @@ namespace UnityProductive
 		public event Create OnCreate;
 
 		List<int> freeIndexes;
-		List<PoolObject> objects;
+		List<IPoolObject> objects;
 
 		public Pool()
 		{
 			freeIndexes = new List<int>();
-			objects = new List<PoolObject>();
+			objects = new List<IPoolObject>();
 		}
 
 		~Pool()
@@ -24,7 +25,7 @@ namespace UnityProductive
 			OnCreate = null;
 		}
 
-		public T CreateObject<T>() where T : PoolObject, new()
+		public T CreateObject<T>() where T : IPoolObject, new()
 		{
 			int id = RecycleObject();
 
@@ -33,7 +34,7 @@ namespace UnityProductive
 				id = GenerateObject<T>();
 			}
 
-			OnCreate(id);
+			OnCreate?.Invoke(id);
 
 			return (T)objects[id];
 		}
@@ -46,27 +47,27 @@ namespace UnityProductive
 			{
 				id = freeIndexes[0];
 				freeIndexes.RemoveAt(0);
-				objects[id].OnRecycle();
+				objects[id].Recycle();
 			}
 
 			return id;
 		}
 
-		int GenerateObject<T>() where T : PoolObject, new()
+		int GenerateObject<T>() where T : IPoolObject, new()
 		{
 			int id = objects.Count;
 			objects.Add(new T());
-			objects[id].OnInitialize();
+			objects[id].Instantiate();
 			return id;
 		}
 
 		public void DestroyObject(int id)
 		{
-			objects[id].OnDestroy();
+			objects[id].Destroy();
 			freeIndexes.Add(id);
 		}
 
-		public T GetObject<T>(int id) where T : PoolObject
+		public T GetObject<T>(int id) where T : IPoolObject
 		{
 			return (T)objects[id];
 		}
@@ -86,7 +87,7 @@ namespace UnityProductive
 			return freeIndexes.Count;
 		}
 
-		public void ForEach<T>(Action<T> action) where T : PoolObject
+		public void ForEach<T>(Action<T> action) where T : IPoolObject
 		{
 			for(int i = 0; i < objects.Count; i++)
 			{

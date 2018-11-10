@@ -1,11 +1,9 @@
-﻿namespace UnityProductive
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "Pool Object", menuName = "Productive/Pool Object")]
+public class PoolObject : ScriptableObject
 {
-	public class PoolObject
-	{
-		public virtual void OnInitialize() { }
-
-		public virtual void OnRecycle() { }
-
-		public virtual void OnDestroy() { }
-	}
+	public GameObject prefab;
 }
