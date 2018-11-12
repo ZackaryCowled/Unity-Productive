@@ -9,6 +9,8 @@ namespace UnityProductive
 		public delegate void ResizeEvent(EditorWindow window);
 		public event ResizeEvent OnResize;
 
+		public int PoolObjectID { get; set; }
+
 		public bool IsActive;
 		public Area RenderArea;
 		public Color RenderColor;
@@ -20,7 +22,7 @@ namespace UnityProductive
 			OnResize = null;
 		}
 
-		public void Instantiate()
+		public void Initialize()
 		{
 			IsActive = true;
 			RenderArea = new Area(Vector2.zero, Vector2.zero, new Margin(0.0f, 0.0f, 0.0f, 0.0f));

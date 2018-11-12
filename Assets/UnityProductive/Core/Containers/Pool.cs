@@ -39,6 +39,20 @@ namespace UnityProductive
 			return (T)objects[id];
 		}
 
+		public T1 CreateObject<T1, T2>(T2 factory, params object[] args) where T1 : IPoolObject, new() where T2 : IFactory<T1>
+		{
+			int id = RecycleObject();
+
+			if(id == INVALID_ID)
+			{
+				id = GenerateObject<T1, T2>(factory, args);
+			}
+
+			OnCreate?.Invoke(id);
+
+			return (T1)objects[id];
+		}
+
 		int RecycleObject()
 		{
 			int id = -1;
@@ -57,7 +71,17 @@ namespace UnityProductive
 		{
 			int id = objects.Count;
 			objects.Add(new T());
-			objects[id].Instantiate();
+			objects[id].PoolObjectID = id;
+			objects[id].Initialize();
+			return id;
+		}
+
+		int GenerateObject<T1, T2>(T2 factory, params object[] args) where T1 : IPoolObject where T2 : IFactory<T1>
+		{
+			int id = objects.Count;
+			objects.Add(factory.CreateInstance(args));
+			objects[id].PoolObjectID = id;
+			objects[id].Initialize();
 			return id;
 		}
 

@@ -5,40 +5,40 @@ using UnityProductive;
 
 public class TestSpawner : MonoBehaviour
 {
-	public PoolObject poolObject;
-	public float spawnsPerSecond = 10.0f;
+	public GameObject Prefab;
+	public int MaxAlive = 1000;
+	public float SpawnsPerSecond = 10.0f;
 
 	Pool pool;
+	PoolObjectBehaviourFactory factory;
 	float timer = 0.0f;
 
 	void Awake()
 	{
 		pool = new Pool();
+		factory = new PoolObjectBehaviourFactory();
 	}
 
 	void Update()
 	{
-		timer += spawnsPerSecond * Time.deltaTime;
+		timer += SpawnsPerSecond * Time.deltaTime;
 
 		while (timer >= 1.0f)
 		{
 			timer -= 1.0f;
 
-			PoolObjectBehaviour poolObjectBehaviour = pool.CreateObject<PoolObjectBehaviour>();
-
-			if (poolObjectBehaviour.PoolObject != null)
+			if (pool.ObjectsCount() < MaxAlive)
 			{
-				poolObjectBehaviour.PoolObject = Instantiate(poolObject.prefab);
+				PoolObjectBehaviour poolObjectBehaviour = pool.CreateObject<PoolObjectBehaviour, PoolObjectBehaviourFactory>(factory, Prefab);
+				poolObjectBehaviour.transform.position = new Vector3(Random.Range(-25.0f, 25.0f), 10.0f, Random.Range(-25.0f, 25.0f));
 			}
-
-			poolObjectBehaviour.PoolObject.transform.position = new Vector3(Random.Range(-25.0f, 25.0f), 10.0f, Random.Range(-25.0f, 25.0f));
 		}
 
 		pool.ForEach((PoolObjectBehaviour poolObject) =>
 		{
-			if(poolObject.Health <= 0 || poolObject.PoolObject.transform.position.y < -10.0f)
+			if(poolObject.Health <= 0 || poolObject.transform.position.y < -10.0f)
 			{
-				pool.DestroyObject(poolObject.PoolObject.GetInstanceID());
+				pool.DestroyObject(poolObject.PoolObjectID);
 			}
 		});
 	}

@@ -2,7 +2,9 @@
 {
 	public interface IPoolObject
 	{
-		void Instantiate();
+		int PoolObjectID { get; set; }
+
+		void Initialize();
 
 		void Destroy();
 

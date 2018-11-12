@@ -5,46 +5,50 @@ using UnityEngine;
 
 namespace UnityProductive
 {
-	public class PoolObjectBehaviour : IPoolObject
+	public class PoolObjectBehaviour : MonoBehaviour, IPoolObject
 	{
-		public GameObject PoolObject { get; set; }
+		public int PoolObjectID { get; set; }
 		public float Health { get; set; }
-		public float Bounciness = 10.0f;
+
 		public float MaxHealth = 100.0f;
 		public float HitDamage = 10.0f;
 
-		public void Instantiate()
+		Material poolObjectMaterial;
+
+		public void Initialize()
 		{
-			Debug.Log("Instantiate");
-			PoolObject = null;
+			Debug.Log("Initialize");
 			Health = MaxHealth;
-	}
+			poolObjectMaterial = GetComponent<Renderer>().material;
+			UpdateColor();
+		}
 
 		public void Destroy()
 		{
 			Debug.Log("Destroy");
-			PoolObject.SetActive(false);
+			gameObject.SetActive(false);
 		}
 
 		public void Recycle()
 		{
 			Debug.Log("Recycle");
-			PoolObject.SetActive(true);
-			PoolObject.transform.position = Vector3.zero;
-			PoolObject.transform.rotation = Quaternion.identity;
+			gameObject.SetActive(true);
+			gameObject.transform.position = Vector3.zero;
+			gameObject.transform.rotation = Quaternion.identity;
 			Health = MaxHealth;
+			UpdateColor();
 		}
 
 		void OnCollisionEnter(Collision collision)
 		{
-			PoolObject.transform.position += collision.impulse * Bounciness;
+			Debug.Log("Collision");
 			Health -= HitDamage;
+			UpdateColor();
 		}
 
-		void OnDrawGizmos()
+		void UpdateColor()
 		{
-			Gizmos.color = Color.Lerp(Color.red, Color.green, MaxHealth / Health);
-			Gizmos.DrawCube(PoolObject.transform.position, Vector3.one);
+			poolObjectMaterial.color = Color.Lerp(Color.red, Color.green, Health / MaxHealth);
 		}
 	}
 }
