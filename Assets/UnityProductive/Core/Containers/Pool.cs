@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityProductive
 {
@@ -72,7 +71,6 @@ namespace UnityProductive
 			int id = objects.Count;
 			objects.Add(new T());
 			objects[id].PoolObjectID = id;
-			objects[id].Initialize();
 			return id;
 		}
 
@@ -81,7 +79,6 @@ namespace UnityProductive
 			int id = objects.Count;
 			objects.Add(factory.CreateInstance(args));
 			objects[id].PoolObjectID = id;
-			objects[id].Initialize();
 			return id;
 		}
 

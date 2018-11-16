@@ -17,17 +17,17 @@ namespace UnityProductive
 
 		Vector2 windowScale;
 
-		~RenderObject()
-		{
-			OnResize = null;
-		}
-
-		public void Initialize()
+		public RenderObject()
 		{
 			IsActive = true;
 			RenderArea = new Area(Vector2.zero, Vector2.zero, new Margin(0.0f, 0.0f, 0.0f, 0.0f));
 			RenderColor = GUI.color;
 			windowScale = Vector2.zero;
+		}
+
+		~RenderObject()
+		{
+			OnResize = null;
 		}
 
 		public void Destroy()

@@ -23,6 +23,12 @@ namespace UnityProductive
 			return pool.CreateObject<T>();
 		}
 
+		public T1 CreateObject<T1, T2>(Hash hash, T2 factory, params object[] args) where T1: IPoolObject, new() where T2 : IFactory<T1>
+		{
+			nextHash = hash;
+			return pool.CreateObject<T1, T2>(factory, args);
+		}
+
 		void CreateObject(int id)
 		{
 			indexMap[nextHash] = id;

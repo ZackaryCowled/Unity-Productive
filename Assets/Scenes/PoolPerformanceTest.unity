@@ -142,8 +142,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76f76b6162a1d4a44901108b07940bdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  usePoolObjects: 1
   Prefab: {fileID: 1820606065388758, guid: dbe354fc9e71a6e40bddb94a1a1d7b5f, type: 2}
-  MaxAlive: 1000
+  MaxAlive: 500
   SpawnsPerSecond: 100
 --- !u!81 &950210681
 AudioListener:

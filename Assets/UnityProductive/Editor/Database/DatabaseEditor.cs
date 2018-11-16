@@ -25,13 +25,6 @@ namespace UnityProductive
 		{
 			renderGroups = new List<RenderGroup>();
 
-			string databasesPath = Application.dataPath + "/Resources/Databases/";
-
-			if (!Directory.Exists(databasesPath))
-			{
-				Directory.CreateDirectory(databasesPath);
-			}
-
 			renderGroups.Add(new DatabaseManager(window));
 		}
 

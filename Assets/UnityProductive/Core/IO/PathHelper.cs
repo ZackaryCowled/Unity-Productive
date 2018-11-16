@@ -9,11 +9,10 @@ namespace UnityProductive
 			if (!Directory.Exists(path))
 			{
 				DirectoryInfo directoryInfo = Directory.CreateDirectory(path);
-
 				return directoryInfo.FullName;
 			}
 
-			return null;
+			return path;
 		}
 	}
 }
