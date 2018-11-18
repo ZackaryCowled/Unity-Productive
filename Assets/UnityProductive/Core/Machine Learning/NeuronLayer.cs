@@ -5,48 +5,21 @@ namespace UnityProductive
 	public class NeuronLayer
 	{
 		public List<Neuron> Neurons;
+		public float Bias { get; set; }
 
-		public NeuronLayer(int size)
+		public NeuronLayer(int layerSize, int nextLayerSize)
 		{
 			Neurons = new List<Neuron>();
 
-			for (int i = 0; i < size; i++)
+			for (int i = 0; i < layerSize; i++)
 			{
-				Neurons.Add(new Neuron(1.0f));
+				Neurons.Add(new Neuron(i, nextLayerSize));
 			}
+
+			Bias = 1.0f;
 		}
 
-		public void ConnectToLayer(NeuronLayer neuronLayer, float weight = 1.0f)
-		{
-			foreach (Neuron neuron in Neurons)
-			{
-				foreach (Neuron otherNeuron in neuronLayer.Neurons)
-				{
-					neuron.ConnectToNeuron(otherNeuron, weight);
-				}
-			}
-		}
-
-		public void DisconnectFromLayer(NeuronLayer neuronLayer)
-		{
-			foreach (Neuron neuron in Neurons)
-			{
-				foreach (Neuron otherNeuron in neuronLayer.Neurons)
-				{
-					neuron.DisconnectFromNeuron(otherNeuron);
-				}
-			}
-		}
-
-		public void MutateBiases(float chance = 1.0f, float min = -0.01f, float max = 0.01f)
-		{
-			foreach(Neuron neuron in Neurons)
-			{
-				neuron.MutateBias(chance, min, max);
-			}
-		}
-
-		public void MutateWeights(float chance = 1.0f, float min = -0.01f, float max = 0.01f)
+		public void MutateWeights(float chance = 0.5f, float min = -0.1f, float max = 0.1f)
 		{
 			foreach(Neuron neuron in Neurons)
 			{

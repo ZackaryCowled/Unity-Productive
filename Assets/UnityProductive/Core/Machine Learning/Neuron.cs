@@ -5,61 +5,44 @@ namespace UnityProductive
 {
 	public class Neuron
 	{
-		public float Bias { get; set; }
 		public float Output { get; set; }
-		public List<NeuronConnection> Connections { get; set; }
+		public float Weight { get; set; }
+		public float[] Weights { get; set; }
 
-		public Neuron(float bias)
-		{
-			Bias = bias;
-			Connections = new List<NeuronConnection>();
-		}
+		int index;
 
-		public void Initialize()
+		public Neuron(int index, int weights)
 		{
-			Output = Bias;
-		}
+			this.index = index;
 
-		public void ConnectToNeuron(Neuron neuron, float weight = 1.0f)
-		{
-			Connections.Add(new NeuronConnection(neuron, weight));
-		}
-
-		public void DisconnectFromNeuron(Neuron neuron)
-		{
-			for (int i = 0; i < Connections.Count; i++)
+			Weight = Random.Range(-1.0f, 1.0f);
+			Weights = new float[weights];
+			
+			for(int weightIndex = 0; weightIndex < weights; weightIndex++)
 			{
-				if (Connections[i].Neuron == neuron)
+				Weights[weightIndex] = Random.Range(-1.0f, 1.0f);
+			}
+		}
+
+		public void Update(NeuronLayer inputLayer)
+		{
+			Output = 1.0f;
+
+			foreach(Neuron neuron in inputLayer.Neurons)
+			{
+				Output *= neuron.Weights[index] * neuron.Output + inputLayer.Bias;
+			}
+
+			Output = 1.0f / (1.0f + Mathf.Exp(-Output));
+		}
+
+		public void MutateWeights(float chance = 0.5f, float min = -0.1f, float max = 0.1f)
+		{
+			for(int weightIndex = 0; weightIndex < Weights.Length; weightIndex++)
+			{
+				if (Random.Range(0.0f, 1.0f) <= chance)
 				{
-					Connections.RemoveAt(i);
-					return;
-				}
-			}
-		}
-
-		public void Execute()
-		{
-			foreach (NeuronConnection connection in Connections)
-			{
-				connection.Neuron.Output += Output * connection.Weight;
-			}
-		}
-
-		public void MutateBias(float chance = 1.0f, float min = -0.01f, float max = 0.01f)
-		{
-			if (Random.Range(0.0f, 1.0f) <= chance)
-			{
-				Bias += Random.Range(min, max);
-			}
-		}
-
-		public void MutateWeights(float chance = 1.0f, float min = -0.01f, float max = 0.01f)
-		{
-			foreach(NeuronConnection neuronConnection in Connections)
-			{
-				if(Random.Range(0.0f, 1.0f) <= chance)
-				{
-					neuronConnection.Weight += Random.Range(min, max);
+					Weights[weightIndex] += Random.Range(min, max);
 				}
 			}
 		}

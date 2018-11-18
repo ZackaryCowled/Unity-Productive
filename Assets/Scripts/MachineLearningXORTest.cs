@@ -6,9 +6,8 @@ using UnityProductive;
 public class MachineLearningXORTest : MonoBehaviour
 {
 	public bool shouldMutate = true;
-	public float biasMutationChance = 0.3f;
-	public float weightMutationChance = 0.7f;
-	public float maxLearningRate = 0.03f;
+	public float weightMutationChance = 0.5f;
+	public float maxLearningRate = 0.1f;
 	public Text outputText;
 
 	NeuralNetwork neuralNetwork;
@@ -62,9 +61,8 @@ public class MachineLearningXORTest : MonoBehaviour
 
 		neuralNetwork = new NeuralNetwork(bestNeuralNetwork);
 
-		if(shouldMutate)
+		if(shouldMutate && lowestError != 0.0f)
 		{
-			neuralNetwork.MutateBiases(biasMutationChance, -maxLearningRate, maxLearningRate);
 			neuralNetwork.MutateWeights(weightMutationChance, -maxLearningRate, maxLearningRate);
 		}
 
@@ -73,7 +71,7 @@ public class MachineLearningXORTest : MonoBehaviour
 
 		for(int i = 0; i < testInputs.Count && testInputs[i].Count > 1; i++)
 		{
-			neuralNetwork.Execute(testInputs[i][0], testInputs[i][1]);
+			neuralNetwork.FeedForward(testInputs[i].ToArray());
 
 			NeuronLayer outputLayer = neuralNetwork.OutputLayer;
 

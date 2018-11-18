@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityProductive
 {
@@ -32,86 +33,89 @@ namespace UnityProductive
 			}
 		}
 
-		public NeuralNetwork(params int[] layers)
+		public NeuralNetwork(int[] layers)
 		{
 			NeuronLayers = new List<NeuronLayer>();
 
-			foreach (int layerSize in layers)
+			if(layers == null || layers.Length == 0)
 			{
-				NeuronLayers.Add(new NeuronLayer(layerSize));
+				Debug.LogWarning("Neural network created with zero layers");
+				return;
 			}
 
-			for (int i = 0; i < NeuronLayers.Count - 1; i++)
+			for(int layerIndex = 0; layerIndex < layers.Length - 1; layerIndex++)
 			{
-				NeuronLayers[i].ConnectToLayer(NeuronLayers[i + 1]);
+				NeuronLayers.Add(new NeuronLayer(layers[layerIndex], layers[layerIndex + 1]));
 			}
+
+			NeuronLayers.Add(new NeuronLayer(layers[layers.Length - 1], 0));
 		}
 
 		public NeuralNetwork(NeuralNetwork copy)
 		{
 			NeuronLayers = new List<NeuronLayer>();
 
-			foreach (NeuronLayer neuronLayer in copy.NeuronLayers)
+			if(copy == null || copy.NeuronLayers.Count == 0)
 			{
-				NeuronLayers.Add(new NeuronLayer(neuronLayer.Neurons.Count));
+				Debug.LogWarning("Neural network copied with zero layers");
+				return;
 			}
 
-			for (int i = 0; i < NeuronLayers.Count - 1; i++)
+			if (copy.NeuronLayers.Count > 1)
 			{
-				NeuronLayers[i].ConnectToLayer(NeuronLayers[i + 1]);
-			}
-
-			for (int i = 0; i < NeuronLayers.Count; i++)
-			{
-				for (int j = 0; j < NeuronLayers[i].Neurons.Count; j++)
+				for (int layerIndex = 0; layerIndex < copy.NeuronLayers.Count - 1; layerIndex++)
 				{
-					NeuronLayers[i].Neurons[j].Bias = copy.NeuronLayers[i].Neurons[j].Bias;
-					NeuronLayers[i].Neurons[j].Output = copy.NeuronLayers[i].Neurons[j].Output;
+					NeuronLayers.Add(new NeuronLayer(copy.NeuronLayers[layerIndex].Neurons.Count, copy.NeuronLayers[layerIndex + 1].Neurons.Count));
+				}
+			}
 
-					for (int k = 0; k < NeuronLayers[i].Neurons[j].Connections.Count; k++)
+			NeuronLayers.Add(new NeuronLayer(copy.NeuronLayers[copy.NeuronLayers.Count - 1].Neurons.Count, 0));
+
+			for(int layerIndex = 0; layerIndex < copy.NeuronLayers.Count; layerIndex++)
+			{
+				for(int neuronIndex = 0; neuronIndex < copy.NeuronLayers[layerIndex].Neurons.Count; neuronIndex++)
+				{
+					NeuronLayers[layerIndex].Neurons[neuronIndex].Output = copy.NeuronLayers[layerIndex].Neurons[neuronIndex].Output;
+
+					for(int weightIndex = 0; weightIndex < copy.NeuronLayers[layerIndex].Neurons[neuronIndex].Weights.Length; weightIndex++)
 					{
-						NeuronLayers[i].Neurons[j].Connections[k].Weight = copy.NeuronLayers[i].Neurons[j].Connections[k].Weight;
+						NeuronLayers[layerIndex].Neurons[neuronIndex].Weights[weightIndex] = copy.NeuronLayers[layerIndex].Neurons[neuronIndex].Weights[weightIndex];
 					}
 				}
+
+				NeuronLayers[layerIndex].Bias = copy.NeuronLayers[layerIndex].Bias;
 			}
 		}
 
-		public void Execute(params float[] inputs)
+		public void FeedForward(float[] inputValues)
 		{
-			if (NeuronLayers.Count > 0)
+			if(NeuronLayers.Count == 0)
 			{
-				for (int i = 0; i < inputs.Length && i < NeuronLayers[0].Neurons.Count; i++)
-				{
-					NeuronLayers[0].Neurons[i].Bias = inputs[i];
-				}
+				Debug.LogError("FeedForward failed because no input layer exists in the neural network");
+				return;
 			}
 
-			foreach (NeuronLayer neuronLayer in NeuronLayers)
+			if (inputValues.Length != NeuronLayers[0].Neurons.Count)
 			{
-				foreach (Neuron neuron in neuronLayer.Neurons)
-				{
-					neuron.Initialize();
-				}
+				Debug.LogError("FeedForward passed " + inputValues.Length.ToString() + " elements but needed " + NeuronLayers[0].Neurons.Count.ToString());
+				return;
 			}
 
-			foreach (NeuronLayer neuronLayer in NeuronLayers)
+			for(int neuronIndex = 0; neuronIndex < inputValues.Length; neuronIndex++)
+			{ 
+				NeuronLayers[0].Neurons[neuronIndex].Output = inputValues[neuronIndex];
+			}
+
+			for(int layerIndex = 1; layerIndex < NeuronLayers.Count; layerIndex++)
 			{
-				foreach (Neuron neuron in neuronLayer.Neurons)
+				for(int neuronIndex = 0; neuronIndex < NeuronLayers[layerIndex].Neurons.Count; neuronIndex++)
 				{
-					neuron.Execute();
+					NeuronLayers[layerIndex].Neurons[neuronIndex].Update(NeuronLayers[layerIndex - 1]);
 				}
 			}
 		}
 
-		public void MutateBiases(float chance = 1.0f, float min = -0.01f, float max = 0.01f)
-		{
-			foreach (NeuronLayer neuronLayer in NeuronLayers)
-			{
-				neuronLayer.MutateBiases(chance, min, max);
-			}
-		}
-
-		public void MutateWeights(float chance = 1.0f, float min = -0.01f, float max = 0.01f)
+		public void MutateWeights(float chance = 0.5f, float min = -0.1f, float max = 0.1f)
 		{
 			foreach (NeuronLayer neuronLayer in NeuronLayers)
 			{

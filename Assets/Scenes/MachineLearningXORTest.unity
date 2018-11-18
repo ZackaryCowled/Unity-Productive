@@ -434,7 +434,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shouldMutate: 1
-  biasMutationChance: 0.5
   weightMutationChance: 0.5
-  maxLearningRate: 0.003
+  maxLearningRate: 0.1
   outputText: {fileID: 1341172661}
