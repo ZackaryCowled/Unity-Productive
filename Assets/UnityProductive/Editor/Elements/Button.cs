@@ -7,7 +7,7 @@ namespace UnityProductive
 		public delegate void ClickedEvent();
 		public event ClickedEvent OnClicked;
 
-		public string Text;
+		public string Text { get; set; }
 
 		~Button()
 		{

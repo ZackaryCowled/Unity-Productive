@@ -2,7 +2,7 @@
 
 namespace UnityProductive
 {
-	public class Rectangle : RenderObject
+	public class Panel : RenderObject
 	{
 		protected override void RenderElements(Rect drawArea)
 		{

@@ -7,7 +7,8 @@ namespace UnityProductive
 	{
 		Database database;
 
-		Rectangle background;
+		Panel background;
+		Image logoImage;
 		Button openDatabaseButton;
 		Button createDatabaseButton;
 
@@ -15,8 +16,12 @@ namespace UnityProductive
 		{
 			database = new Database();
 
-			background = CreateRenderObject<Rectangle>("Background");
+			background = CreateRenderObject<Panel>("Background");
 			background.OnResize += OnBackgroundResize;
+
+			logoImage = CreateRenderObject<Image>("Logo Image");
+			logoImage.Texture = Resources.Load<Texture>("UnityProductiveLogo");
+			logoImage.OnResize += OnLogoImageResize;
 
 			openDatabaseButton = CreateRenderObject<Button>("Open Database Button");
 			openDatabaseButton.Text = "Open Database";
@@ -40,17 +45,23 @@ namespace UnityProductive
 			background.RenderArea.SetScale(new Vector2(window.position.width, 50.0f));
 		}
 
+		void OnLogoImageResize(EditorWindow window)
+		{
+			logoImage.RenderArea.SetPosition(new Vector2(window.position.width * 0.5f - 100.0f, window.position.height * 0.5f - 125.0f));
+			logoImage.RenderArea.SetScale(new Vector2(200.0f, 200.0f));
+		}
+
 		void OnOpenDatabaseButtonResize(EditorWindow window)
 		{
-			openDatabaseButton.RenderArea.SetPosition(new Vector2(0.0f, window.position.height - 50.0f));
-			openDatabaseButton.RenderArea.SetScale(new Vector2(window.position.width, 25.0f));
+			openDatabaseButton.RenderArea.SetPosition(new Vector2(window.position.width * 0.5f - 150.0f, window.position.height - 50.0f));
+			openDatabaseButton.RenderArea.SetScale(new Vector2(300.0f, 25.0f));
 			openDatabaseButton.RenderArea.SetMargin(new Margin(5.0f, 5.0f, 5.0f, 2.0f));
 		}
 
 		void OnCreateDatabaseButtonResize(EditorWindow window)
 		{
-			createDatabaseButton.RenderArea.SetPosition(new Vector2(0.0f, window.position.height - 25.0f));
-			createDatabaseButton.RenderArea.SetScale(new Vector2(window.position.width, 25.0f));
+			createDatabaseButton.RenderArea.SetPosition(new Vector2(window.position.width * 0.5f - 150.0f, window.position.height - 25.0f));
+			createDatabaseButton.RenderArea.SetScale(new Vector2(300.0f, 25.0f));
 			createDatabaseButton.RenderArea.SetMargin(new Margin(5.0f, 2.0f, 5.0f, 5.0f));
 		}
 
