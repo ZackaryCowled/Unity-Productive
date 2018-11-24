@@ -14,6 +14,8 @@ namespace UnityProductive
 	{
 		public Texture Texture { get; set; }
 		public WrapMode WrapMode { get; set; }
+		public Vector2 UVOffsetXY { get; set; } = new Vector2(0.0f, 0.0f);
+		public Vector2 UVOffsetZW { get; set; } = new Vector2(0.0f, 0.0f);
 
 		public float NativeWidth
 		{
@@ -65,11 +67,11 @@ namespace UnityProductive
 						break;
 
 					case WrapMode.Stretch:
-						GUI.DrawTextureWithTexCoords(drawArea, Texture, new Rect(0.0f, 0.0f, 1.0f, 1.0f), true);
+						GUI.DrawTextureWithTexCoords(drawArea, Texture, new Rect(UVOffsetXY.x, UVOffsetXY.y, 1.0f + UVOffsetZW.x, 1.0f + UVOffsetZW.y), true);
 						break;
 
 					case WrapMode.Repeat:
-						GUI.DrawTextureWithTexCoords(drawArea, Texture, new Rect(0.0f, 0.0f, drawArea.width / Texture.width, drawArea.height / Texture.height), true);
+						GUI.DrawTextureWithTexCoords(drawArea, Texture, new Rect(UVOffsetXY.x, UVOffsetXY.y, drawArea.width / Texture.width + UVOffsetZW.x, drawArea.height / Texture.height + UVOffsetZW.y), true);
 						break;
 				}
 			}

@@ -40,6 +40,8 @@ namespace UnityProductive
 				renderGroup.PollEvents(this);
 				renderGroup.Render(this);
 			}
+
+			Repaint();
 		}
 	}
 }

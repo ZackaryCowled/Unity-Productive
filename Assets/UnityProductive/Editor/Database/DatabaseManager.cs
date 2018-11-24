@@ -22,6 +22,7 @@ namespace UnityProductive
 			gridImage.Texture = Resources.Load<Texture>("UnityProductiveGrid");
 			gridImage.WrapMode = WrapMode.Repeat;
 			gridImage.OnResize += OnGridImageResize;
+			gridImage.OnUpdate += OnGridImageUpdate;
 
 			logoPanel = CreateRenderObject<Panel>("Logo Panel");
 			logoPanel.RenderColor = new Color(0.125f, 0.125f, 0.125f);
@@ -54,6 +55,11 @@ namespace UnityProductive
 		{
 			gridImage.RenderArea.SetPosition(new Vector2(0.0f, 0.0f));
 			gridImage.RenderArea.SetScale(new Vector2(window.position.width, window.position.height - 50.0f));
+		}
+
+		void OnGridImageUpdate()
+		{
+			gridImage.UVOffsetXY = new Vector2(gridImage.UVOffsetXY.x + 0.001f * Time.deltaTime, gridImage.UVOffsetXY.y);
 		}
 
 		void OnLogoPanelResize(EditorWindow window)
