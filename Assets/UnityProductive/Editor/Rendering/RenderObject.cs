@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 using UnityEditor;
 
@@ -8,6 +8,9 @@ namespace UnityProductive
 	{
 		public delegate void ResizeEvent(EditorWindow window);
 		public event ResizeEvent OnResize;
+
+		public delegate void UpdateEvent();
+		public event UpdateEvent OnUpdate;
 
 		public int PoolObjectID { get; set; }
 
@@ -42,6 +45,8 @@ namespace UnityProductive
 
 		public void PollEvents(EditorWindow window)
 		{
+			OnUpdate?.Invoke();
+
 			HandleResizeEvent(window);
 		}
 

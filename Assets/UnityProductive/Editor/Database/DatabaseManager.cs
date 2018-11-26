@@ -7,8 +7,10 @@ namespace UnityProductive
 	{
 		Database database;
 
-		Panel background;
+		Image gridImage;
+		Panel logoPanel;
 		Image logoImage;
+		Panel buttonPanel;
 		Button openDatabaseButton;
 		Button createDatabaseButton;
 
@@ -16,12 +18,22 @@ namespace UnityProductive
 		{
 			database = new Database();
 
-			background = CreateRenderObject<Panel>("Background");
-			background.OnResize += OnBackgroundResize;
+			gridImage = CreateRenderObject<Image>("Grid Image");
+			gridImage.Texture = Resources.Load<Texture>("UnityProductiveGrid");
+			gridImage.WrapMode = WrapMode.Repeat;
+			gridImage.OnResize += OnGridImageResize;
+			gridImage.OnUpdate += OnGridImageUpdate;
+
+			logoPanel = CreateRenderObject<Panel>("Logo Panel");
+			logoPanel.RenderColor = new Color(0.125f, 0.125f, 0.125f);
+			logoPanel.OnResize += OnLogoPanelResize;
 
 			logoImage = CreateRenderObject<Image>("Logo Image");
 			logoImage.Texture = Resources.Load<Texture>("UnityProductiveLogo");
 			logoImage.OnResize += OnLogoImageResize;
+
+			buttonPanel = CreateRenderObject<Panel>("Button Panel");
+			buttonPanel.OnResize += OnButtonPanelResize;
 
 			openDatabaseButton = CreateRenderObject<Button>("Open Database Button");
 			openDatabaseButton.Text = "Open Database";
@@ -39,16 +51,33 @@ namespace UnityProductive
 			return database;
 		}
 
-		void OnBackgroundResize(EditorWindow window)
+		void OnGridImageResize(EditorWindow window)
 		{
-			background.RenderArea.SetPosition(new Vector2(0.0f, window.position.height - 50.0f));
-			background.RenderArea.SetScale(new Vector2(window.position.width, 50.0f));
+			gridImage.RenderArea.SetPosition(new Vector2(0.0f, 0.0f));
+			gridImage.RenderArea.SetScale(new Vector2(window.position.width, window.position.height - 50.0f));
+		}
+
+		void OnGridImageUpdate()
+		{
+			gridImage.UVOffsetXY = new Vector2(gridImage.UVOffsetXY.x + 0.001f * Time.deltaTime, gridImage.UVOffsetXY.y);
+		}
+
+		void OnLogoPanelResize(EditorWindow window)
+		{
+			logoPanel.RenderArea.SetPosition(new Vector2(0.0f, window.position.height * 0.5f - 88.0f));
+			logoPanel.RenderArea.SetScale(new Vector2(window.position.width, 125.0f));
 		}
 
 		void OnLogoImageResize(EditorWindow window)
 		{
-			logoImage.RenderArea.SetPosition(new Vector2(window.position.width * 0.5f - 100.0f, window.position.height * 0.5f - 125.0f));
-			logoImage.RenderArea.SetScale(new Vector2(200.0f, 200.0f));
+			logoImage.RenderArea.SetPosition(new Vector2(window.position.width * 0.5f - logoImage.NativeWidth * 0.5f, (window.position.height - 50.0f) * 0.5f - logoImage.NativeHeight * 0.5f));
+			logoImage.RenderArea.SetScale(new Vector2(logoImage.NativeWidth, logoImage.NativeHeight));
+		}
+
+		void OnButtonPanelResize(EditorWindow window)
+		{
+			buttonPanel.RenderArea.SetPosition(new Vector2(0.0f, window.position.height - 50.0f));
+			buttonPanel.RenderArea.SetScale(new Vector2(window.position.width, 50.0f));
 		}
 
 		void OnOpenDatabaseButtonResize(EditorWindow window)
