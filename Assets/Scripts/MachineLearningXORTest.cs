@@ -5,6 +5,7 @@ using UnityProductive;
 
 public class MachineLearningXORTest : MonoBehaviour
 {
+	public bool useBackPropagation = true;
 	public bool shouldMutate = true;
 	public float weightMutationChance = 0.5f;
 	public float maxLearningRate = 0.1f;
@@ -59,11 +60,14 @@ public class MachineLearningXORTest : MonoBehaviour
 			return;
 		}
 
-		neuralNetwork = new NeuralNetwork(bestNeuralNetwork);
-
-		if(shouldMutate && lowestError != 0.0f)
+		if (neuralNetwork == null)
 		{
-			neuralNetwork.MutateWeights(weightMutationChance, -maxLearningRate, maxLearningRate);
+			neuralNetwork = new NeuralNetwork(bestNeuralNetwork);
+
+			if (!useBackPropagation&& shouldMutate && lowestError != 0.0f)
+			{
+				neuralNetwork.MutateWeights(weightMutationChance, -maxLearningRate, maxLearningRate);
+			}
 		}
 
 		error = 0;
@@ -78,11 +82,19 @@ public class MachineLearningXORTest : MonoBehaviour
 			if (outputLayer != null && outputLayer.Neurons.Count > 0)
 			{
 				outputText.text += outputLayer.Neurons[0].Output + System.Environment.NewLine;
-				error += Mathf.Abs(testOutputs[i] - outputLayer.Neurons[0].Output);
+
+				if (!useBackPropagation)
+				{
+					error += Mathf.Abs(testOutputs[i] - outputLayer.Neurons[0].Output);
+				}
+				else
+				{
+					neuralNetwork.BackPropagate(new float[] { testOutputs[i] });
+				}
 			}
 		}
 
-		if(error < lowestError)
+		if(!useBackPropagation && error < lowestError)
 		{
 			lowestError = error;
 			bestNeuralNetwork = new NeuralNetwork(neuralNetwork);
