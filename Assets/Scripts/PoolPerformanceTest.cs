@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityProductive;
 
@@ -8,70 +7,58 @@ public class PoolPerformanceTest : MonoBehaviour
 	public bool usePoolObjects;
 	public GameObject Prefab;
 	public int MaxAlive = 1000;
-	public float SpawnsPerSecond = 10.0f;
+	public float Spread = 50.0f;
+	public float SpawnHeight = 10.0f;
 
 	Pool pool;
 	PoolObjectBehaviourFactory factory;
-	List<PoolObjectBehaviour> gameObjects;
-	float timer = 0.0f;
+	List<PoolObjectBehaviour> poolObjectBehaviours;
 
 	void Awake()
 	{
-		if (usePoolObjects)
-		{
-			pool = new Pool();
-			factory = new PoolObjectBehaviourFactory();
-		}
-		else
-		{
-			gameObjects = new List<PoolObjectBehaviour>();
-		}
+		pool = new Pool();
+		factory = new PoolObjectBehaviourFactory();
+		poolObjectBehaviours = new List<PoolObjectBehaviour>();
 	}
 
 	void Update()
 	{
-		timer += SpawnsPerSecond * Time.deltaTime;
-
-		while (timer >= 1.0f)
-		{
-			timer -= 1.0f;
-
-			if (usePoolObjects)
-			{
-				if (pool.ObjectsCount() < MaxAlive)
-				{
-					PoolObjectBehaviour poolObjectBehaviour = pool.CreateObject<PoolObjectBehaviour, PoolObjectBehaviourFactory>(factory, Prefab);
-					poolObjectBehaviour.transform.position = new Vector3(Random.Range(-25.0f, 25.0f), 10.0f, Random.Range(-25.0f, 25.0f));
-				}
-			}
-			else
-			{
-				if(gameObjects.Count < MaxAlive)
-				{
-					gameObjects.Add(Instantiate(Prefab, new Vector3(Random.Range(-25.0f, 25.0f), 10.0f, Random.Range(-25.0f, 25.0f)), Quaternion.identity).GetComponent<PoolObjectBehaviour>());
-				}
-			}
-		}
-
 		if (usePoolObjects)
 		{
-			pool.ForEach((PoolObjectBehaviour poolObject) =>
+			while (pool.ObjectsCount() < MaxAlive)
 			{
-				if (poolObject.Health <= 0 || poolObject.transform.position.y < -10.0f)
-				{
-					pool.DestroyObject(poolObject.PoolObjectID);
-				}
-			});
+				Vector3 randomSphere = Random.insideUnitSphere;
+				Vector3 spawnPosition = new Vector3(randomSphere.x * Mathf.Abs(Spread), SpawnHeight, randomSphere.z * Mathf.Abs(Spread));
+
+				PoolObjectBehaviour poolObjectBehaviour = pool.CreateObject<PoolObjectBehaviour, PoolObjectBehaviourFactory>(factory, Prefab);
+				poolObjectBehaviour.transform.position = spawnPosition;
+			}
 		}
 		else
 		{
-			for(int i = 0; i < gameObjects.Count; i++)
+			while (poolObjectBehaviours.Count < MaxAlive)
 			{
-				if(gameObjects[i].Health <= 0 || gameObjects[i].transform.position.y < -10.0f)
-				{
-					Destroy(gameObjects[i]);
-					gameObjects.RemoveAt(i);
-				}
+				Vector3 randomSphere = Random.insideUnitSphere;
+				Vector3 spawnPosition = new Vector3(randomSphere.x * Spread, SpawnHeight, randomSphere.z * Spread);
+
+				poolObjectBehaviours.Add(Instantiate(Prefab, spawnPosition, Quaternion.identity).GetComponent<PoolObjectBehaviour>());
+			}
+		}
+
+		pool.ForEach((PoolObjectBehaviour poolObject) =>
+		{
+			if (poolObject.Health <= 0 || pool.ObjectsCount() > MaxAlive)
+			{
+				pool.DestroyObject(poolObject.PoolObjectID);
+			}
+		});
+
+		for (int i = 0; i < poolObjectBehaviours.Count; i++)
+		{
+			if (poolObjectBehaviours[i].Health <= 0 || poolObjectBehaviours.Count > MaxAlive)
+			{
+				Destroy(poolObjectBehaviours[i].gameObject);
+				poolObjectBehaviours.RemoveAt(i);
 			}
 		}
 	}

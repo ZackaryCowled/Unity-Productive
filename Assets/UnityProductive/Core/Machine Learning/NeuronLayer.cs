@@ -5,15 +5,18 @@ namespace UnityProductive
 	public class NeuronLayer
 	{
 		public List<Neuron> Neurons;
+		public TransferFunction TransferFunction { get; set; }
 		public float Bias { get; set; }
 
-		public NeuronLayer(int layerSize, int nextLayerSize)
+		public NeuronLayer(int layerSize, int nextLayerSize, TransferFunction transferFunction)
 		{
 			Neurons = new List<Neuron>();
 
+			TransferFunction = transferFunction;
+
 			for (int i = 0; i < layerSize; i++)
 			{
-				Neurons.Add(new Neuron(i, nextLayerSize));
+				Neurons.Add(new Neuron(i, nextLayerSize, TransferFunction));
 			}
 
 			Bias = 1.0f;

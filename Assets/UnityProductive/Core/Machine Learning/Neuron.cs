@@ -3,16 +3,23 @@ using UnityEngine;
 
 namespace UnityProductive
 {
+	public enum TransferFunction
+	{
+		HyperbolicTangent,
+		Sigmoid
+	}
+
 	public class Neuron
 	{
 		public float Output { get; set; }
 		public float[] Weights { get; set; }
 		public float[] DeltaWeights { get; set; }
 		public float Gradient { get; set; }
+		public TransferFunction TransferFunction { get; set; } = TransferFunction.Sigmoid;
 
 		int index;
 
-		public Neuron(int index, int weights)
+		public Neuron(int index, int weights, TransferFunction transferFunction)
 		{
 			this.index = index;
 
@@ -23,6 +30,8 @@ namespace UnityProductive
 			{
 				Weights[i] = Random.Range(-1.0f, 1.0f);
 			}
+
+			TransferFunction = transferFunction;
 		}
 
 		public void CalculateOutputGradients(float target)
@@ -51,17 +60,6 @@ namespace UnityProductive
 
 		public void FeedForward(NeuronLayer inputLayer)
 		{
-			//SIGMOID
-			//Output = 1.0f;
-
-			//foreach(Neuron neuron in inputLayer.Neurons)
-			//{
-			//	Output *= neuron.Weights[index] * neuron.Output + inputLayer.Bias;
-			//}
-
-			//Output = 1.0f / (1.0f + Mathf.Exp(-Output));
-
-			//HYPERBOLIC TANGENT
 			float sum = 0.0f;
 
 			foreach (Neuron neuron in inputLayer.Neurons)
@@ -76,12 +74,32 @@ namespace UnityProductive
 
 		float Transfer(float value)
 		{
-			return (float)System.Math.Tanh(value);
+			switch(TransferFunction)
+			{
+				case TransferFunction.HyperbolicTangent:
+					return (float)System.Math.Tanh(value);
+
+				case TransferFunction.Sigmoid:
+					return 1.0f / (1.0f + Mathf.Exp(-value));
+
+				default:
+					return 0.0f;
+			}
 		}
 
 		float TransferDerivative(float value)
 		{
-			return 1.0f - value * value;
+			switch (TransferFunction)
+			{
+				case TransferFunction.HyperbolicTangent:
+					return 1.0f - Mathf.Pow(value, 2.0f);
+
+				case TransferFunction.Sigmoid:
+					return value * (1.0f - value);
+
+				default:
+					return 0.0f;
+			}
 		}
 
 		public void MutateWeights(float chance = 0.5f, float min = -0.1f, float max = 0.1f)
@@ -95,7 +113,7 @@ namespace UnityProductive
 			}
 		}
 
-		public void UpdateWeights(NeuronLayer previousLayer)
+		public void UpdateWeights(NeuronLayer previousLayer, float learningRate = 0.3f, float momentum = 0.5f)
 		{
 			for(int i = 0; i < previousLayer.Neurons.Count; i++)
 			{
@@ -103,7 +121,7 @@ namespace UnityProductive
 
 				float oldDeltaWeight = neuron.DeltaWeights[index];
 
-				float newDeltaWeight = 0.1f /*Learning rate*/ * neuron.Output * Gradient + 0.5f /*Momentum*/ * oldDeltaWeight;
+				float newDeltaWeight = learningRate * neuron.Output * Gradient + momentum * oldDeltaWeight;
 
 				neuron.DeltaWeights[index] = newDeltaWeight;
 				neuron.Weights[index] += newDeltaWeight;

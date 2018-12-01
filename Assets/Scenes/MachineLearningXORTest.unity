@@ -433,7 +433,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b56fcaefa9d15654c8e4a8033e435e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shouldMutate: 1
+  TransferFunction: 0
+  useBackPropagation: 1
+  shouldMutate: 0
   weightMutationChance: 0.5
-  maxLearningRate: 0.1
+  learningRate: 0.3
+  momentum: 0.5
   outputText: {fileID: 1341172661}

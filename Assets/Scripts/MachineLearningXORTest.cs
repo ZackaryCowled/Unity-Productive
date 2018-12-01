@@ -5,10 +5,12 @@ using UnityProductive;
 
 public class MachineLearningXORTest : MonoBehaviour
 {
+	public TransferFunction TransferFunction;
 	public bool useBackPropagation = true;
 	public bool shouldMutate = true;
 	public float weightMutationChance = 0.5f;
-	public float maxLearningRate = 0.1f;
+	public float learningRate = 0.3f;
+	public float momentum = 0.5f;
 	public Text outputText;
 
 	NeuralNetwork neuralNetwork;
@@ -21,7 +23,7 @@ public class MachineLearningXORTest : MonoBehaviour
 
 	void Awake()
 	{
-		bestNeuralNetwork = new NeuralNetwork(new int[] { 2, 4, 1 });
+		bestNeuralNetwork = new NeuralNetwork(new int[] { 2, 4, 1 }, TransferFunction);
 
 		testInputs = new List<List<float>>();
 
@@ -60,13 +62,18 @@ public class MachineLearningXORTest : MonoBehaviour
 			return;
 		}
 
-		if (neuralNetwork == null)
+		if(useBackPropagation && neuralNetwork == null)
+		{
+			neuralNetwork = new NeuralNetwork(bestNeuralNetwork);
+		}
+
+		if (shouldMutate)
 		{
 			neuralNetwork = new NeuralNetwork(bestNeuralNetwork);
 
-			if (!useBackPropagation&& shouldMutate && lowestError != 0.0f)
+			if (lowestError != 0.0f)
 			{
-				neuralNetwork.MutateWeights(weightMutationChance, -maxLearningRate, maxLearningRate);
+				neuralNetwork.MutateWeights(weightMutationChance, -learningRate, learningRate);
 			}
 		}
 
@@ -83,21 +90,25 @@ public class MachineLearningXORTest : MonoBehaviour
 			{
 				outputText.text += outputLayer.Neurons[0].Output + System.Environment.NewLine;
 
-				if (!useBackPropagation)
-				{
-					error += Mathf.Abs(testOutputs[i] - outputLayer.Neurons[0].Output);
-				}
-				else
+				if (useBackPropagation)
 				{
 					neuralNetwork.BackPropagate(new float[] { testOutputs[i] });
+				}
+
+				if(shouldMutate)
+				{
+					error += Mathf.Abs(testOutputs[i] - outputLayer.Neurons[0].Output);
 				}
 			}
 		}
 
-		if(!useBackPropagation && error < lowestError)
+		if (shouldMutate)
 		{
-			lowestError = error;
-			bestNeuralNetwork = new NeuralNetwork(neuralNetwork);
+			if (error < lowestError)
+			{
+				lowestError = error;
+				bestNeuralNetwork = new NeuralNetwork(neuralNetwork);
+			}
 		}
 	}
 }

@@ -35,7 +35,7 @@ namespace UnityProductive
 
 		float error;
 
-		public NeuralNetwork(int[] layers)
+		public NeuralNetwork(int[] layers, TransferFunction transferFunction)
 		{
 			NeuronLayers = new List<NeuronLayer>();
 
@@ -47,10 +47,10 @@ namespace UnityProductive
 
 			for (int layerIndex = 0; layerIndex < layers.Length - 1; layerIndex++)
 			{
-				NeuronLayers.Add(new NeuronLayer(layers[layerIndex], layers[layerIndex + 1]));
+				NeuronLayers.Add(new NeuronLayer(layers[layerIndex], layers[layerIndex + 1], transferFunction));
 			}
 
-			NeuronLayers.Add(new NeuronLayer(layers[layers.Length - 1], 0));
+			NeuronLayers.Add(new NeuronLayer(layers[layers.Length - 1], 0, transferFunction));
 		}
 
 		public NeuralNetwork(NeuralNetwork copy)
@@ -67,11 +67,11 @@ namespace UnityProductive
 			{
 				for (int layerIndex = 0; layerIndex < copy.NeuronLayers.Count - 1; layerIndex++)
 				{
-					NeuronLayers.Add(new NeuronLayer(copy.NeuronLayers[layerIndex].Neurons.Count, copy.NeuronLayers[layerIndex + 1].Neurons.Count));
+					NeuronLayers.Add(new NeuronLayer(copy.NeuronLayers[layerIndex].Neurons.Count, copy.NeuronLayers[layerIndex + 1].Neurons.Count, copy.NeuronLayers[layerIndex + 1].TransferFunction));
 				}
 			}
 
-			NeuronLayers.Add(new NeuronLayer(copy.NeuronLayers[copy.NeuronLayers.Count - 1].Neurons.Count, 0));
+			NeuronLayers.Add(new NeuronLayer(copy.NeuronLayers[copy.NeuronLayers.Count - 1].Neurons.Count, 0, copy.NeuronLayers[copy.NeuronLayers.Count -1].TransferFunction));
 
 			for (int layerIndex = 0; layerIndex < copy.NeuronLayers.Count; layerIndex++)
 			{
@@ -117,7 +117,7 @@ namespace UnityProductive
 			}
 		}
 
-		public void BackPropagate(float[] targetValues)
+		public void BackPropagate(float[] targetValues, float learningRate = 0.3f, float momentum = 0.5f)
 		{
 			if (NeuronLayers.Count == 0)
 			{
